@@ -1,18 +1,33 @@
 /*
-  * Copyright (C) 2011 Clearspring Technologies, Inc.
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
- * http://www.apache.org/licenses/LICENSE-2.0
-  *
- * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
- */
+  **
+  * Java implementation of HyperBitBit (HBB) algorithm as seen on the presentation
+  * by Robert Sedgewick:
+  * <p/>
+  * https://www.cs.princeton.edu/~rs/talks/AC11-Cardinality.pdf
+  * <p/>
+  * HBB aims to beat HyperLogLog.
+  * From the talk, on practical data:
+  * - HyperBitBit, for N < 2^64,
+  * -  Uses 128  6 bits. (in this implementation case 128  8)
+  * - Estimates cardinality within 10% of the actual.
+  * <p/>
+  * The algorithm still need some improvements.
+  * - If you insert twice the same element the structure can change (not as in HLL)
+  * - For small cardinalities it does not work AT ALL.
+  * - The constatn 5.4 used in the cardinality estimation formula should be refined
+  * with real world applications feedback
+  * <p/>
+  * Even so, HyperBitBit has the necessary characteristics to become
+  * a better algorithm than HyperLogLog:
+  * - Makes one pass through the stream.
+  * - Uses a few dozen machine instructions per value
+  * - Uses a few hundred bits
+  * - Achieves 10% relative accuracy or better
+  * <p/>
+  * Any feedback to improve the algorithm in its weak points will be welcome.
+  * <p/>
+  */
+ 
 package com.clearspring.analytics.stream.cardinality;
 
 import com.clearspring.analytics.hash.MurmurHash;
@@ -24,6 +39,12 @@ public class HyperBitBit implements ICardinality {
     int lgN;
     long sketch;
     long sketch2;
+    
+    /**
+      * Create a new HyperBitBit instance.
+      *
+      * Remember that it does not work well for small cardinalities!
+      */
 
     public HyperBitBit() {
         lgN = 5;
