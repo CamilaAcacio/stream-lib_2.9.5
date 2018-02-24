@@ -28,10 +28,11 @@
   * <p/>
   */
  
-package com.clearspring.analytics.stream.cardinality;
+package com.clearspring.experimental.stream.cardinality;
 
-import com.clearspring.analytics.hash.MurmurHash;
 
+import com.clearspring.analytics.stream.cardinality.ICardinality;
+import com.clearspring.analytics.stream.cardinality.CardinalityMergeException;
 import java.io.IOException;
 
 public class HyperBitBit implements ICardinality {
